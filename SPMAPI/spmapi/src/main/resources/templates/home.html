@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #007bff;
+        }
+        .main-content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Stock Portfolio Management System</h1>
+    </header>
+    <div class="container">
+        <nav>
+            <a href="/login">Log In</a>
+            <a href="/signup">Sign Up</a>
+            <a href="/swagger-ui/index.html#/">Swagger Page</a>
+            <a href="/admin">Admin Actions</a>
+        </nav>
+        <div class="main-content">
+            <h2>Dashboard</h2>
+            <p>Select an option from the menu above to manage users, stocks, portfolios, or view admin actions.</p>
+        </div>
+    </div>
+</body>
+</html>
