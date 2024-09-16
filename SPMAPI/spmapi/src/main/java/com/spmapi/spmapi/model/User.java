@@ -46,10 +46,14 @@ public class User {
 
     
 
-    // Constructors
-    public User() {
+     // Parametresiz yapıcı
+     public User() {
     }
 
+    // ID ile yapıcı
+    public User(Long id) {
+        this.id = id;
+    }
 
     public User(Long id, String username, String password ,LocalDateTime createdAt,
      String role, double balance,

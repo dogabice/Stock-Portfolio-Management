@@ -17,6 +17,31 @@ import org.springframework.security.config.Customizer;
 public class SecurityConfig {
 
     @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // CSRF koruması ihtiyaca göre etkinleştirilmelidir
+            .authorizeHttpRequests(authorizeRequests ->
+                authorizeRequests
+                    .requestMatchers("/public/**").permitAll() // Public URL'ler
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Admin endpoint'leri
+                    .requestMatchers("/api/user/**").hasRole("USER") // User endpoint'leri
+                    .anyRequest().authenticated() // Diğer tüm istekler kimlik doğrulamalıdır
+            )
+            .formLogin(formLogin ->
+                formLogin
+                    .loginPage("/login")
+                    .permitAll()
+            )
+            .logout(logout ->
+                logout
+                    .permitAll()
+            )
+            .httpBasic(Customizer.withDefaults()); // Temel kimlik doğrulama
+
+        return http.build();
+    }
+
+    @Bean
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("admin")
@@ -34,21 +59,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable()) // CSRF koruması ihtiyaca göre etkinleştirilmelidir
-            .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/api/user/**").hasRole("USER")
-                    .anyRequest().authenticated()
-            )
-            .httpBasic(Customizer.withDefaults()); // Temel kimlik doğrulama
-        return http.build();
-    }
-
-    
-
 }

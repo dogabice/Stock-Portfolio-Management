@@ -5,13 +5,15 @@ import com.spmapi.spmapi.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.math.BigDecimal;
+
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
+
     @Autowired
     private TransactionService transactionService;
 
@@ -19,33 +21,20 @@ public class TransactionController {
     public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-        Optional<Transaction> transaction = transactionService.getTransactionById(id);
-        return transaction.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
-        return transactionService.saveTransaction(transaction);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @RequestBody Transaction transaction) {
-        if (transactionService.getTransactionById(id).isPresent()) {
-            transaction.setId(id);
-            return ResponseEntity.ok(transactionService.saveTransaction(transaction));
+    // Komisyon oranını admin tarafından güncelleyen endpoint
+    @PutMapping("/update-commission")
+    public ResponseEntity<String> updateCommissionRate(@RequestParam BigDecimal newRate) {
+        if (newRate.compareTo(BigDecimal.ZERO) <= 0) {
+            return ResponseEntity.badRequest().body("Comission rate must be larger than zero.");
         }
-        return ResponseEntity.notFound().build();
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
-        if (transactionService.getTransactionById(id).isPresent()) {
-            transactionService.deleteTransaction(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        transactionService.setCommissionRate(newRate);
+        return ResponseEntity.ok("Commission rate successfully updated: " + newRate + "%");
+    }
+    
+    // Mevcut komisyon oranını dönen endpoint
+    @GetMapping("/commission-rate")
+    public ResponseEntity<BigDecimal> getCommissionRate() {
+        return ResponseEntity.ok(transactionService.getCommissionRate());
     }
 }

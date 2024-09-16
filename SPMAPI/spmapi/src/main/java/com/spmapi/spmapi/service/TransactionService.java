@@ -17,7 +17,7 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
 
     @Value("${commission.rate}")
-    private BigDecimal commissionRate;
+    private BigDecimal commissionRate; // Varsayılan oranı property'den alır.
 
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
@@ -40,5 +40,15 @@ public class TransactionService {
     private BigDecimal calculateCommission(BigDecimal price, int quantity) {
         BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
         return totalPrice.multiply(commissionRate).divide(BigDecimal.valueOf(100));
+    }
+
+    // Admin'in komisyon oranını değiştirebileceği setter metodu
+    public void setCommissionRate(BigDecimal newRate) {
+        this.commissionRate = newRate;
+    }
+
+    // Mevcut komisyon oranını almak için getter metodu
+    public BigDecimal getCommissionRate() {
+        return this.commissionRate;
     }
 }

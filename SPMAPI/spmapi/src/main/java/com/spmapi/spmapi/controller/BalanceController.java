@@ -1,15 +1,20 @@
 package com.spmapi.spmapi.controller;
 
+import com.spmapi.spmapi.DTOs.BalanceDTO;
 import com.spmapi.spmapi.model.Balance;
+import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.service.BalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/balances")
 public class BalanceController {
     
@@ -17,29 +22,39 @@ public class BalanceController {
     private BalanceService balanceService;
 
     @GetMapping
-    public ResponseEntity<List<Balance>> getAllBalances() {
+    public ResponseEntity<List<BalanceDTO>> getAllBalances() {
         List<Balance> balances = balanceService.getAllBalances();
-        return ResponseEntity.ok(balances);
+        List<BalanceDTO> dtoList = balances.stream()
+                .map(balance -> new BalanceDTO(balance.getId(), balance.getBalance(), balance.getUser().getId()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Balance> getBalanceById(@PathVariable Long id) {
+    public ResponseEntity<BalanceDTO> getBalanceById(@PathVariable Long id) {
         Optional<Balance> balance = balanceService.getBalanceById(id);
-        return balance.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return balance.map(b -> ResponseEntity.ok(new BalanceDTO(b.getId(), b.getBalance(), b.getUser().getId())))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Balance> createBalance(@RequestBody Balance balance) {
+    public ResponseEntity<BalanceDTO> createBalance(@RequestBody BalanceDTO balanceDTO) {
+        Balance balance = new Balance();
+        balance.setBalance(balanceDTO.getBalance());
+        balance.setUser(new User(balanceDTO.getUserId())); // User objesini uygun şekilde oluşturmalısınız
         Balance createdBalance = balanceService.saveBalance(balance);
-        return ResponseEntity.ok(createdBalance);
+        return ResponseEntity.ok(new BalanceDTO(createdBalance.getId(), createdBalance.getBalance(), createdBalance.getUser().getId()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Balance> updateBalance(@PathVariable Long id, @RequestBody Balance balance) {
+    public ResponseEntity<BalanceDTO> updateBalance(@PathVariable Long id, @RequestBody BalanceDTO balanceDTO) {
         if (balanceService.getBalanceById(id).isPresent()) {
+            Balance balance = new Balance();
             balance.setId(id);
+            balance.setBalance(balanceDTO.getBalance());
+            balance.setUser(new User(balanceDTO.getUserId())); // User objesini uygun şekilde oluşturmalısınız
             Balance updatedBalance = balanceService.saveBalance(balance);
-            return ResponseEntity.ok(updatedBalance);
+            return ResponseEntity.ok(new BalanceDTO(updatedBalance.getId(), updatedBalance.getBalance(), updatedBalance.getUser().getId()));
         }
         return ResponseEntity.notFound().build();
     }
@@ -54,10 +69,9 @@ public class BalanceController {
     }
 
     @GetMapping("/api/users/{id}/balance")
-public ResponseEntity<Balance> getUserBalance(@PathVariable Long id) {
-    Optional<Balance> balance = balanceService.getBalanceByUserId(id);
-    return balance.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-}
-
-
+    public ResponseEntity<BalanceDTO> getUserBalance(@PathVariable Long id) {
+        Optional<Balance> balance = balanceService.getBalanceByUserId(id);
+        return balance.map(b -> ResponseEntity.ok(new BalanceDTO(b.getId(), b.getBalance(), b.getUser().getId())))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

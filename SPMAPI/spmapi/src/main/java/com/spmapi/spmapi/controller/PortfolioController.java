@@ -31,14 +31,6 @@ public class PortfolioController {
         return portfolioService.savePortfolio(portfolio);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable Long id, @RequestBody Portfolio portfolio) {
-        if (portfolioService.getPortfolioById(id).isPresent()) {
-            portfolio.setId(id);
-            return ResponseEntity.ok(portfolioService.savePortfolio(portfolio));
-        }
-        return ResponseEntity.notFound().build();
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePortfolio(@PathVariable Long id) {

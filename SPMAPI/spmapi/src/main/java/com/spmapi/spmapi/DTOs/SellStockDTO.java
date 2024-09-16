@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BuyStockDTO {
+public class SellStockDTO {
 
     public Long portfolio_id;
     public Long stock_id;

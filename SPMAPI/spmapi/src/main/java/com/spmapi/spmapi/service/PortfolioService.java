@@ -34,8 +34,9 @@ public class PortfolioService {
     public void createPortfolioForUser(User user) {
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(user);
-        portfolio.setPortfolioStocks(new ArrayList<>()); // Boş bir hisse listesiyle başla
+        portfolio.setPortfolioStocks(new ArrayList<>()); 
         portfolioRepository.save(portfolio);
     }
+
     
 }

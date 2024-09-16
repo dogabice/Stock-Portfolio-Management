@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
-
+    //-------------------------------------------------------------
     public User CreateUserDTOToUser(CreateUserDTO createUserDTO){
         User user = new User();
         user.setUsername(createUserDTO.getUsername());
@@ -30,8 +30,7 @@ public class UserService {
    
     return user;
    }
-
-
+   //-------------------------------------------------------------
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -61,7 +60,7 @@ public class UserService {
         user.setBalance(amount);
         return userRepository.save(user);
     }
-
+    //-------------------------------------------------------------
     public boolean addBalanceUsingCard(Long userId, String cardCode) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
@@ -73,67 +72,39 @@ public class UserService {
         }
         return false;
     }
-
-
-
+    //-------------------------------------------------------------
     public void createPortfolioForUser(User user) {
-        // Kullanıcının zaten bir portföyü olup olmadığını kontrol et
         List<Portfolio> existingPortfolios = portfolioRepository.findByUser(user);
         if (existingPortfolios.isEmpty()) {
             Portfolio newPortfolio = new Portfolio();
             newPortfolio.setUser(user);
-
-            /* 
-            List<Long> defaultStockIds = List.of(1L, 2L, 3L); // Varsayılan stok ID'leri
-    
-            List<PortfolioStock> defaultStocks = new ArrayList<>();
-            for (Long stockId : defaultStockIds) {
-                Optional<Stock> stock = stockRepository.findById(stockId);
-                if (stock.isPresent()) {
-                    PortfolioStock portfolioStock = new PortfolioStock();
-                    portfolioStock.setPortfolio(newPortfolio);
-                    portfolioStock.setStock(stock.get());
-                    portfolioStock.setQuantity(0); // Başlangıç miktarı
-                    defaultStocks.add(portfolioStock);
-                } else {
-                    System.err.println("Stok ID'si " + stockId + " bulunamadı.");
-                }
-            }
-                
-            newPortfolio.setPortfolioStocks(defaultStocks);
-            */
-
-            portfolioRepository.save(newPortfolio); // Portföyü kaydet
+            portfolioRepository.save(newPortfolio); 
         }
     }
-    
-    
-
+    //-------------------------------------------------------------
     public List<User> getUsersByRole(String roleName) {
         return userRepository.findUsersByRole(roleName);
     }
-
+    //-------------------------------------------------------------
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     public void saveUser(String key, User user) {
         redisTemplate.opsForValue().set(key, user);
     }
-
+    //-------------------------------------------------------------
     public User getUser(String key) {
         return (User) redisTemplate.opsForValue().get(key);
     }
-
+    //-------------------------------------------------------------
     public long getUserCount() {
         return userRepository.count();   
     }
-
-    // Kullanıcıyı ve portföyü oluşturur
+    //-------------------------------------------------------------
     public User createUser(User user) {
         User savedUser = saveUser(user);
-        createPortfolioForUser(savedUser); // Kullanıcıyı oluşturduktan sonra portföy oluştur
+        createPortfolioForUser(savedUser); 
         return savedUser;
     }
-    
-    
+    //-------------------------------------------------------------
 }

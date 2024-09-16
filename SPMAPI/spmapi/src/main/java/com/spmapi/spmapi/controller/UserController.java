@@ -2,10 +2,12 @@ package com.spmapi.spmapi.controller;
 
 import com.spmapi.spmapi.DTOs.CreateUserDTO;
 import com.spmapi.spmapi.model.User;
+import com.spmapi.spmapi.service.PortfolioService;
 import com.spmapi.spmapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PortfolioService portfolioService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -30,61 +35,61 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PostMapping
+    //-------------------------------------------------------------------------------------------------------------
+    //REGISTER
+    @PostMapping("/register")
     @ResponseBody
     public ResponseEntity<User> createUser(@RequestBody CreateUserDTO createUserDTO) {
         long userCount = userService.getUserCount();
 
+        // DTO to USER
         User user = userService.CreateUserDTOToUser(createUserDTO);
-    
+
+        // If this is the first regiter or the role is ADMIN.
         if ("admin".equalsIgnoreCase(user.getRole()) || userCount == 0) {
             user.setRole("admin");
         } else {
             user.setRole("user");
         }
-    
-        // Kullanıcıyı oluşturur ve portföyü de otomatik olarak oluşturur
+
+        // Create User
         User createdUser = userService.createUser(user);
-    
+
+        // Create empty portfolio for the new user.
+        portfolioService.createPortfolioForUser(createdUser);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-    
 
-@DeleteMapping("/{id}")
-public void deleteOneUser(@PathVariable Long id){
-    userService.deleteUserById(id);
-}
+    //-------------------------------------------------------------------------------------------------------------
+    @DeleteMapping("/{id}")
+       public void deleteOneUser(@PathVariable Long id){
+           userService.deleteUserById(id);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //ADMIN TRANSACTIONS
 
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        Optional<User> existingUser = userService.getUserById(id);
-        if (existingUser.isPresent()) {
-            User updatedUser = existingUser.get();
-            updatedUser.setUsername(user.getUsername());
-            updatedUser.setPassword(user.getPassword());
-            updatedUser.setRole(user.getRole());
-            updatedUser.setBalance(user.getBalance());
-            User savedUser = userService.saveUser(updatedUser);
-            return new ResponseEntity<>(savedUser, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    @PostMapping("/admin/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    public ResponseEntity<?> createUserWithRole(@RequestBody CreateUserDTO createUserDTO, @RequestParam String role) {
+        // Roles should be "admin" or "user".
+        if (!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("user")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Invalid role. Only 'admin' or 'user' roles are allowed.");
         }
+
+        User user = userService.CreateUserDTOToUser(createUserDTO);
+
+        user.setRole(role.toLowerCase());
+
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PatchMapping("/{id}/assign-role")
-    public ResponseEntity<User> assignRole(@PathVariable Long id, @RequestParam String role) {
-        Optional<User> existingUser = userService.getUserById(id);
-        if (existingUser.isPresent()) {
-            User user = userService.assignRole(existingUser.get(), role);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
+    //-------------------------------------------------------------------------
     @PatchMapping("/{id}/update-balance")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUserBalance(@PathVariable Long id, @RequestParam double amount) {
         Optional<User> existingUser = userService.getUserById(id);
         if (existingUser.isPresent()) {
@@ -95,4 +100,5 @@ public void deleteOneUser(@PathVariable Long id){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    //-------------------------------------------------------------------------
 }
