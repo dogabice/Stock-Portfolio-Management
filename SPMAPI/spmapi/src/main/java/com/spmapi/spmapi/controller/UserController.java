@@ -1,5 +1,6 @@
 package com.spmapi.spmapi.controller;
 
+import com.spmapi.spmapi.DTOs.CreateUserDTO;
 import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,10 @@ public class UserController {
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO createUserDTO) {
         long userCount = userService.getUserCount();
+
+        User user = userService.CreateUserDTOToUser(createUserDTO);
     
         if ("admin".equalsIgnoreCase(user.getRole()) || userCount == 0) {
             user.setRole("admin");

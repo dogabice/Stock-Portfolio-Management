@@ -1,7 +1,12 @@
 package com.spmapi.spmapi.controller;
 
+import com.spmapi.spmapi.DTOs.BuyStockDTO;
 import com.spmapi.spmapi.model.Stock;
+import com.spmapi.spmapi.model.Transaction;
+import com.spmapi.spmapi.service.BuyStockService;
 import com.spmapi.spmapi.service.StockService;
+import com.spmapi.spmapi.service.TransactionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -15,6 +20,12 @@ import java.util.Optional;
 public class StockController {
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private BuyStockService buyStockService;
+
+    @Autowired
+    private TransactionService transactionService;
 
 
     @GetMapping("/home")
@@ -33,6 +44,15 @@ public class StockController {
         Optional<Stock> stock = stockService.getStockById(id);
         return stock.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/buy")
+    public  Transaction buyStock(@RequestBody BuyStockDTO buyStockDTO) {
+        Transaction transaction= buyStockService.BuyStockDTOToTransaction(buyStockDTO);
+        return transactionService.saveTransaction(transaction);
+    }
+
+
+
 
     @PostMapping
     public Stock createStock(@RequestBody Stock stock) {

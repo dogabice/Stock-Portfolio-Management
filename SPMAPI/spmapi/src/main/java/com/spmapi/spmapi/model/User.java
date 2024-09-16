@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.spmapi.spmapi.DTOs.CreateUserDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,9 +22,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String username;
     private String password;
+
     private LocalDateTime createdAt;
     private String role; 
     private double balance; 
@@ -43,9 +44,12 @@ public class User {
 
 
 
+    
+
     // Constructors
     public User() {
     }
+
 
     public User(Long id, String username, String password ,LocalDateTime createdAt,
      String role, double balance,

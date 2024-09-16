@@ -1,18 +1,15 @@
 package com.spmapi.spmapi.service;
 
 import com.spmapi.spmapi.model.User;
+import com.spmapi.spmapi.DTOs.CreateUserDTO;
 import com.spmapi.spmapi.model.Portfolio;
-import com.spmapi.spmapi.model.PortfolioStock;
-import com.spmapi.spmapi.model.Stock;
 import com.spmapi.spmapi.repository.UserRepository;
 import com.spmapi.spmapi.repository.PortfolioRepository;
-import com.spmapi.spmapi.repository.StockRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +22,14 @@ public class UserService {
     @Autowired
     private PortfolioRepository portfolioRepository;
 
-    @Autowired
-    private StockRepository stockRepository;
+
+    public User CreateUserDTOToUser(CreateUserDTO createUserDTO){
+        User user = new User();
+        user.setUsername(createUserDTO.getUsername());
+        user.setPassword(createUserDTO.getPassword());
+   
+    return user;
+   }
 
 
     public List<User> getAllUsers() {
@@ -71,13 +74,16 @@ public class UserService {
         return false;
     }
 
+
+
     public void createPortfolioForUser(User user) {
         // Kullanıcının zaten bir portföyü olup olmadığını kontrol et
         List<Portfolio> existingPortfolios = portfolioRepository.findByUser(user);
         if (existingPortfolios.isEmpty()) {
             Portfolio newPortfolio = new Portfolio();
             newPortfolio.setUser(user);
-    
+
+            /* 
             List<Long> defaultStockIds = List.of(1L, 2L, 3L); // Varsayılan stok ID'leri
     
             List<PortfolioStock> defaultStocks = new ArrayList<>();
@@ -93,7 +99,10 @@ public class UserService {
                     System.err.println("Stok ID'si " + stockId + " bulunamadı.");
                 }
             }
+                
             newPortfolio.setPortfolioStocks(defaultStocks);
+            */
+
             portfolioRepository.save(newPortfolio); // Portföyü kaydet
         }
     }
