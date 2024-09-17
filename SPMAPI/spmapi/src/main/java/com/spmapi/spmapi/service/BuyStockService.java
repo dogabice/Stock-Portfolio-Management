@@ -27,6 +27,7 @@ public class BuyStockService {
 
     @Autowired
     private TransactionService transactionService;
+    /* 
 
     public void buyStock(BuyStockDTO buyStockDTO) {
         BigDecimal buyPrice = stockService.getBuyPriceByStockId(buyStockDTO.getStock_id());
@@ -39,11 +40,12 @@ public class BuyStockService {
         
         
         Transaction transaction = BuyStockDTOToTransaction(buyStockDTO);
-        transaction.setPrice(finalCost); // Toplam maliyeti fiyat olarak ayarla
-        transaction.setCommission(commission); // Komisyonu ayarla
+        transaction.setPrice(finalCost); 
+        transaction.setCommission(commission); 
         
         transactionService.saveTransaction(transaction);
     }
+    */
     
     public Transaction BuyStockDTOToTransaction(BuyStockDTO buyStockDTO) {
         Transaction transaction = new Transaction();
@@ -57,18 +59,28 @@ public class BuyStockService {
             Portfolio portfolio = portfolioOptional.get();
             Stock stock = stockOptional.get();
             
+            BigDecimal buyPrice = stock.getBuyPrice();
+            int quantity = buyStockDTO.getQuantity();
+            BigDecimal commissionRate = transactionService.getCommissionRate();
+            
+            BigDecimal totalCost = buyPrice.multiply(BigDecimal.valueOf(quantity));
+            BigDecimal commission = totalCost.multiply(commissionRate).divide(BigDecimal.valueOf(100));
+            BigDecimal finalCost = totalCost.subtract(commission);
+            
             transaction.setUser(user);
             transaction.setPortfolio(portfolio);
             transaction.setStock(stock);
-            transaction.setQuantity(buyStockDTO.getQuantity());
+            transaction.setQuantity(quantity);
             transaction.setTransactionType(Transaction.TransactionType.BUY);
-            // Burada price, toplam maliyeti ifade eder
-            transaction.setPrice(stock.getBuyPrice().multiply(BigDecimal.valueOf(buyStockDTO.getQuantity())));
+            transaction.setPrice(finalCost); // Toplam maliyeti fiyat olarak ayarla
+            transaction.setCommission(commission); // Komisyonu ayarla
+            
         } else {
             throw new RuntimeException("User, Portfolio or Stock cannot be found.");
         }
         
         return transaction;
     }
+    
     
 }
