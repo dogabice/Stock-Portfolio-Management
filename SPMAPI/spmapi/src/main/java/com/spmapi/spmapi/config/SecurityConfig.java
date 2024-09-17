@@ -27,20 +27,13 @@ public class SecurityConfig {
                     .requestMatchers("/api/user/**").hasRole("USER") // User endpoint'leri
                     .anyRequest().authenticated() // Diğer tüm istekler kimlik doğrulamalıdır
             )
-            .formLogin(formLogin ->
-                formLogin
-                    .loginPage("/login")
-                    .permitAll()
-            )
-            .logout(logout ->
-                logout
-                    .permitAll()
-            )
-            .httpBasic(Customizer.withDefaults()); // Temel kimlik doğrulama
-
+            .httpBasic(Customizer.withDefaults()) // Temel kimlik doğrulama
+            .logout(logout -> 
+                logout.permitAll()); // Çıkış işlemi herkes için açık
+    
         return http.build();
     }
-
+    
     @Bean
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();

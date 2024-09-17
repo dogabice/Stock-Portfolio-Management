@@ -1,6 +1,8 @@
 package com.spmapi.spmapi.controller;
 
+import com.spmapi.spmapi.DTOs.BuyStockDTO;
 import com.spmapi.spmapi.model.Transaction;
+import com.spmapi.spmapi.service.BuyStockService;
 import com.spmapi.spmapi.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +23,17 @@ public class TransactionController {
     public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
-    // Komisyon oranını admin tarafından güncelleyen endpoint
+
     @PutMapping("/update-commission")
     public ResponseEntity<String> updateCommissionRate(@RequestParam BigDecimal newRate) {
         if (newRate.compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.badRequest().body("Comission rate must be larger than zero.");
+            return ResponseEntity.badRequest().body("Commission rate must be larger than zero.");
         }
 
         transactionService.setCommissionRate(newRate);
         return ResponseEntity.ok("Commission rate successfully updated: " + newRate + "%");
     }
-    
-    // Mevcut komisyon oranını dönen endpoint
+
     @GetMapping("/commission-rate")
     public ResponseEntity<BigDecimal> getCommissionRate() {
         return ResponseEntity.ok(transactionService.getCommissionRate());

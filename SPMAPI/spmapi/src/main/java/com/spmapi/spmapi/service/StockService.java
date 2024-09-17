@@ -7,6 +7,7 @@ import com.spmapi.spmapi.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,14 @@ import java.util.Optional;
 public class StockService {
     @Autowired
     private StockRepository stockRepository;
+
+
+    public BigDecimal getBuyPriceByStockId(Long stockId) {
+        Stock stock = stockRepository.findById(stockId)
+            .orElseThrow(() -> new RuntimeException("Stock not found"));
+
+        return stock.getBuyPrice();
+    }
 
     public List<Stock> getAllStocks() {
         return stockRepository.findAll();

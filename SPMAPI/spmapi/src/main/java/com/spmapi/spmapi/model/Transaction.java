@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 public class Transaction {
@@ -35,6 +36,7 @@ public class Transaction {
     private int quantity;
     private BigDecimal price;
     private BigDecimal commission;
+    private LocalDateTime createdAt;
 
     public enum TransactionType {
         BUY, SELL
@@ -104,5 +106,13 @@ public class Transaction {
 
     public void setCommission(BigDecimal commission) {
         this.commission = commission;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

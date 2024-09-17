@@ -17,7 +17,6 @@ public class BuyStockDTO {
     public Long user_id;
 
     public int quantity;
-    public BigDecimal price;
+    //public BigDecimal price;
     //public BigDecimal commission;
-
 }
