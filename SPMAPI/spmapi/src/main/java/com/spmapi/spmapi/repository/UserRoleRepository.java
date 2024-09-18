@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
-    // Kullanıcı ID'sine göre rollerin listelenmesi
     List<UserRole> findUserRolesByUserId(Long userId);
 }

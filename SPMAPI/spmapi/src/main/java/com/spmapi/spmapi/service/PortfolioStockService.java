@@ -9,17 +9,18 @@ import java.util.List;
 
 @Service
 public class PortfolioStockService {
+    //----------------------------------------------------------------     
     @Autowired
     private PortfolioStockRepository portfolioStockRepository;
-
+    //---------------------------------------------------------------- 
     public List<PortfolioStock> getAllPortfolioStocks() {
         return portfolioStockRepository.findAll();
     }
-
+    //---------------------------------------------------------------- 
     public PortfolioStock savePortfolioStock(PortfolioStock portfolioStock) {
         return portfolioStockRepository.save(portfolioStock);
     }
-
+    //---------------------------------------------------------------- 
     public void deletePortfolioStock(Long id) {
         portfolioStockRepository.deleteById(id);
     }

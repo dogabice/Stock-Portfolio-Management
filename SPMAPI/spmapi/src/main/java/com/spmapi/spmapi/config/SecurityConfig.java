@@ -15,7 +15,7 @@ import org.springframework.security.config.Customizer;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    //---------------------------------------------------------------- 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -33,7 +33,7 @@ public class SecurityConfig {
     
         return http.build();
     }
-    
+    //----------------------------------------------------------------     
     @Bean
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .build());
         return manager;
     }
-
+    //---------------------------------------------------------------- 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -13,13 +13,14 @@ import java.math.BigDecimal;
 @Entity
 @Table
 public class BalanceCode {
+    //----------------------------------------------------------------    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     private String code;
     private BigDecimal amount;
-
+    //----------------------------------------------------------------
     // Constructors
     public BalanceCode() {
     }
@@ -29,7 +30,7 @@ public class BalanceCode {
         this.code = code;
         this.amount = amount;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -38,7 +39,7 @@ public class BalanceCode {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public String getCode() {
         return code;
     }
@@ -46,7 +47,7 @@ public class BalanceCode {
     public void setCode(String code) {
         this.code = code;
     }
-
+    //----------------------------------------------------------------
     public BigDecimal getAmount() {
         return amount;
     }
@@ -54,4 +55,5 @@ public class BalanceCode {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+    //----------------------------------------------------------------    
 }

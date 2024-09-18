@@ -7,7 +7,6 @@ import com.spmapi.spmapi.repository.UserRepository;
 import com.spmapi.spmapi.repository.PortfolioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +14,12 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
+    //---------------------------------------------------------------- 
     @Autowired
     private UserRepository userRepository;
-
+    //---------------------------------------------------------------- 
     @Autowired
     private PortfolioRepository portfolioRepository;
-
     //-------------------------------------------------------------
     public User CreateUserDTOToUser(CreateUserDTO createUserDTO){
         User user = new User();
@@ -34,28 +32,28 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
+    //---------------------------------------------------------------- 
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
-
+    //---------------------------------------------------------------- 
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
+    //---------------------------------------------------------------- 
     public User saveUser(User user) {
         return userRepository.save(user);
     }
-
+    //---------------------------------------------------------------- 
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }
-
+    //---------------------------------------------------------------- 
     public User assignRole(User user, String role) {
         user.setRole(role);
         return userRepository.save(user);
     }
-
+    //---------------------------------------------------------------- 
     public User updateUserBalance(User user, double amount) {
         user.setBalance(amount);
         return userRepository.save(user);
@@ -84,17 +82,6 @@ public class UserService {
     //-------------------------------------------------------------
     public List<User> getUsersByRole(String roleName) {
         return userRepository.findUsersByRole(roleName);
-    }
-    //-------------------------------------------------------------
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    public void saveUser(String key, User user) {
-        redisTemplate.opsForValue().set(key, user);
-    }
-    //-------------------------------------------------------------
-    public User getUser(String key) {
-        return (User) redisTemplate.opsForValue().get(key);
     }
     //-------------------------------------------------------------
     public long getUserCount() {

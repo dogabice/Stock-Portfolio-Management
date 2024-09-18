@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BalanceRepository extends JpaRepository<Balance, Long> {
-    // Balance ile ilgili özel sorgular eklenebilir
     Optional<Balance> findByUserId(Long userId);
 }

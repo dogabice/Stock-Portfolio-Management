@@ -12,43 +12,44 @@ import java.util.Optional;
 
 @Service
 public class TransactionService {
-   
+    //----------------------------------------------------------------    
     @Autowired
     private TransactionRepository transactionRepository;
-
+    //---------------------------------------------------------------- 
+    //Check the default commission rate value from application.properties file.
     @Value("${commission.rate}")
-    private BigDecimal commissionRate; // Varsayılan oranı property'den alır.
-
+    private BigDecimal commissionRate; 
+    //---------------------------------------------------------------- 
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
-    }
-
+        return transactionRepository.findAllByOrderByCreatedAtDesc();
+    }    
+    //---------------------------------------------------------------- 
     public Transaction saveTransaction(Transaction transaction) {
         BigDecimal commission = calculateCommission(transaction.getPrice(), transaction.getQuantity());
         transaction.setCommission(commission);
         return transactionRepository.save(transaction);
     }
-
+    //---------------------------------------------------------------- 
     public void deleteTransaction(Long id) {
         transactionRepository.deleteById(id);
     }
-
+    //---------------------------------------------------------------- 
     public Optional<Transaction> getTransactionById(Long id) {
         return transactionRepository.findById(id);
     }
-
+    //---------------------------------------------------------------- 
     private BigDecimal calculateCommission(BigDecimal price, int quantity) {
         BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
         return totalPrice.multiply(commissionRate).divide(BigDecimal.valueOf(100));
     }
-
-    // Admin'in komisyon oranını değiştirebileceği setter metodu
+    //---------------------------------------------------------------- 
+    // To use of Admin's transaction of changing commission rate. 
     public void setCommissionRate(BigDecimal newRate) {
         this.commissionRate = newRate;
     }
-
-    // Mevcut komisyon oranını almak için getter metodu
+    // To get the commission rate value. 
     public BigDecimal getCommissionRate() {
         return this.commissionRate;
     }
+    //----------------------------------------------------------------
 }

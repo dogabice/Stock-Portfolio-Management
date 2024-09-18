@@ -8,9 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Long> {
-    // Belirli bir sembole sahip stokları bulmak için
     Optional<Stock> findBySymbol(String symbol);
 
-    // Belirli bir isme sahip stokları bulmak için
     Optional<Stock> findByName(String name);
 }

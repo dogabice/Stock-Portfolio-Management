@@ -13,18 +13,19 @@ import lombok.Data;
 @Entity
 @Table
 public class UserRole {
+    //----------------------------------------------------------------     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //---------------------------------------------------------------- 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
+    //---------------------------------------------------------------- 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-
+    //---------------------------------------------------------------- 
     // Constructors
     public UserRole() {
     }
@@ -34,7 +35,7 @@ public class UserRole {
         this.user = user;
         this.role = role;
     }
-
+    //---------------------------------------------------------------- 
     // Getters and Setters
     public Long getId() {
         return id;
@@ -43,7 +44,6 @@ public class UserRole {
         this.id = id;
     }
     //-------------------------------------------------
-    //for user data
     public User getUser() {
         return user;
     }
@@ -51,11 +51,11 @@ public class UserRole {
         this.user = user;
     }
     //-------------------------------------------------
-    //for role data
     public Role getRole() {
         return role;
     }
     public void setRole(Role role) {
         this.role = role;
     }
+    //----------------------------------------------------------------     
 }

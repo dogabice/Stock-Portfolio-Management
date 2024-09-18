@@ -11,12 +11,13 @@ import lombok.Data;
 @Entity
 @Table
 public class Role {
+    //----------------------------------------------------------------    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     private String roleName;
-
+    //----------------------------------------------------------------
     // Constructors
     public Role() {
     }
@@ -25,7 +26,7 @@ public class Role {
         this.id = id;
         this.roleName = roleName;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -34,7 +35,7 @@ public class Role {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public String getRoleName() {
         return roleName;
     }
@@ -42,4 +43,5 @@ public class Role {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+    //----------------------------------------------------------------    
 }

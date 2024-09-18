@@ -3,8 +3,6 @@ package com.spmapi.spmapi.DTOs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.math.BigDecimal;
-
 
 
 @AllArgsConstructor
@@ -17,7 +15,4 @@ public class SellStockDTO {
     public Long user_id;
 
     public int quantity;
-    public BigDecimal price;
-    //public BigDecimal commission;
-
 }

@@ -11,62 +11,45 @@ import com.spmapi.spmapi.model.Portfolio;
 import com.spmapi.spmapi.model.Stock;
 import com.spmapi.spmapi.model.Transaction;
 import com.spmapi.spmapi.model.User;
-import com.spmapi.spmapi.model.Transaction.TransactionType;
-
 @Service
 public class BuyStockService {
-
+    //---------------------------------------------------------------- 
+    //SERVICES
     @Autowired
     private UserService userService;
-
+    //---------------------------------------------------------------- 
     @Autowired
     private PortfolioService portfolioService;
-
+    //---------------------------------------------------------------- 
     @Autowired
     private StockService stockService;
-
+    //---------------------------------------------------------------- 
     @Autowired
     private TransactionService transactionService;
-    /* 
-
-    public void buyStock(BuyStockDTO buyStockDTO) {
-        BigDecimal buyPrice = stockService.getBuyPriceByStockId(buyStockDTO.getStock_id());
-        int quantity = buyStockDTO.getQuantity();
-        BigDecimal commissionRate = transactionService.getCommissionRate();
-        
-        BigDecimal totalCost = buyPrice.multiply(BigDecimal.valueOf(quantity));
-        BigDecimal commission = totalCost.multiply(commissionRate).divide(BigDecimal.valueOf(100));
-        BigDecimal finalCost = totalCost.subtract(commission);
-        
-        
-        Transaction transaction = BuyStockDTOToTransaction(buyStockDTO);
-        transaction.setPrice(finalCost); 
-        transaction.setCommission(commission); 
-        
-        transactionService.saveTransaction(transaction);
-    }
-    */
-    
+    //----------------------------------------------------------------     
     public Transaction BuyStockDTOToTransaction(BuyStockDTO buyStockDTO) {
         Transaction transaction = new Transaction();
-        
+        //----------------------------------------------------------------     
         Optional<User> userOptional = userService.getUserById(buyStockDTO.getUser_id());
         Optional<Portfolio> portfolioOptional = portfolioService.getPortfolioById(buyStockDTO.getPortfolio_id());
         Optional<Stock> stockOptional = stockService.getStockById(buyStockDTO.getStock_id());
-        
+        //----------------------------------------------------------------     
         if (userOptional.isPresent() && portfolioOptional.isPresent() && stockOptional.isPresent()) {
             User user = userOptional.get();
             Portfolio portfolio = portfolioOptional.get();
             Stock stock = stockOptional.get();
-            
+            //----------------------------------------------------------------
+            //Getting informations      
             BigDecimal buyPrice = stock.getBuyPrice();
             int quantity = buyStockDTO.getQuantity();
             BigDecimal commissionRate = transactionService.getCommissionRate();
-            
+            //----------------------------------------------------------------     
+            //Calculating totalcost, commission and finalcost values.
             BigDecimal totalCost = buyPrice.multiply(BigDecimal.valueOf(quantity));
             BigDecimal commission = totalCost.multiply(commissionRate).divide(BigDecimal.valueOf(100));
             BigDecimal finalCost = totalCost.subtract(commission);
-            
+            //---------------------------------------------------------------- 
+            //Setting informations    
             transaction.setUser(user);
             transaction.setPortfolio(portfolio);
             transaction.setStock(stock);
@@ -74,6 +57,7 @@ public class BuyStockService {
             transaction.setTransactionType(Transaction.TransactionType.BUY);
             transaction.setPrice(finalCost); // Toplam maliyeti fiyat olarak ayarla
             transaction.setCommission(commission); // Komisyonu ayarla
+            transactionService.saveTransaction(transaction);
             
         } else {
             throw new RuntimeException("User, Portfolio or Stock cannot be found.");

@@ -12,31 +12,32 @@ import java.util.Optional;
 
 @Service
 public class PortfolioService {
+    //----------------------------------------------------------------     
     @Autowired
     private PortfolioRepository portfolioRepository;
-
+    //---------------------------------------------------------------- 
     public List<Portfolio> getAllPortfolios() {
         return portfolioRepository.findAll();
     }
-
+    //---------------------------------------------------------------- 
     public Optional<Portfolio> getPortfolioById(Long id) {
         return portfolioRepository.findById(id);
     }
-
+    //---------------------------------------------------------------- 
     public Portfolio savePortfolio(Portfolio portfolio) {
         return portfolioRepository.save(portfolio);
     }
-
+    //---------------------------------------------------------------- 
     public void deletePortfolio(Long id) {
         portfolioRepository.deleteById(id);
     }
-    
+    //----------------------------------------------------------------   
+    //System already create one portfolio for each user but with use of this method they can create more portfolio for themselfs.  
     public void createPortfolioForUser(User user) {
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(user);
         portfolio.setPortfolioStocks(new ArrayList<>()); 
         portfolioRepository.save(portfolio);
     }
-
-    
+    //---------------------------------------------------------------- 
 }

@@ -17,10 +17,11 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/balances")
 public class BalanceController {
-    
+    //-------------------------------------------------------------------     
     @Autowired
     private BalanceService balanceService;
-
+    //------------------------------------------------------------------- 
+    //MAPPINGS
     @GetMapping
     public ResponseEntity<List<BalanceDTO>> getAllBalances() {
         List<Balance> balances = balanceService.getAllBalances();
@@ -29,14 +30,14 @@ public class BalanceController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtoList);
     }
-
+    //------------------------------------------------------------------- 
     @GetMapping("/{id}")
     public ResponseEntity<BalanceDTO> getBalanceById(@PathVariable Long id) {
         Optional<Balance> balance = balanceService.getBalanceById(id);
         return balance.map(b -> ResponseEntity.ok(new BalanceDTO(b.getId(), b.getBalance(), b.getUser().getId())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    //------------------------------------------------------------------- 
     @PostMapping
     public ResponseEntity<BalanceDTO> createBalance(@RequestBody BalanceDTO balanceDTO) {
         Balance balance = new Balance();
@@ -45,7 +46,7 @@ public class BalanceController {
         Balance createdBalance = balanceService.saveBalance(balance);
         return ResponseEntity.ok(new BalanceDTO(createdBalance.getId(), createdBalance.getBalance(), createdBalance.getUser().getId()));
     }
-
+    //------------------------------------------------------------------- 
     @PutMapping("/{id}")
     public ResponseEntity<BalanceDTO> updateBalance(@PathVariable Long id, @RequestBody BalanceDTO balanceDTO) {
         if (balanceService.getBalanceById(id).isPresent()) {
@@ -58,7 +59,7 @@ public class BalanceController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    //------------------------------------------------------------------- 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBalance(@PathVariable Long id) {
         if (balanceService.getBalanceById(id).isPresent()) {
@@ -67,11 +68,12 @@ public class BalanceController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    //------------------------------------------------------------------- 
     @GetMapping("/api/users/{id}/balance")
     public ResponseEntity<BalanceDTO> getUserBalance(@PathVariable Long id) {
         Optional<Balance> balance = balanceService.getBalanceByUserId(id);
         return balance.map(b -> ResponseEntity.ok(new BalanceDTO(b.getId(), b.getBalance(), b.getUser().getId())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    //-------------------------------------------------------------------     
 }

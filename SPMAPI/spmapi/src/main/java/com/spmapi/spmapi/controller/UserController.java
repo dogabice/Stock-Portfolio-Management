@@ -16,25 +16,24 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
+    //-------------------------------------------------------------------
     @Autowired
     private UserService userService;
 
     @Autowired
     private PortfolioService portfolioService;
-
+    //-------------------------------------------------------------------
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
+    //-------------------------------------------------------------------
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-
     //-------------------------------------------------------------------------------------------------------------
     //REGISTER
     @PostMapping("/register")

@@ -10,28 +10,28 @@ import java.util.Optional;
 
 @Service
 public class BalanceService {
+    //----------------------------------------------------------------     
     @Autowired
     private BalanceRepository balanceRepository;
-
+    //---------------------------------------------------------------- 
     public List<Balance> getAllBalances() {
         return balanceRepository.findAll();
     }
-
+    //---------------------------------------------------------------- 
     public Optional<Balance> getBalanceById(Long id) {
-        
         return balanceRepository.findById(id);
     }
-
+    //---------------------------------------------------------------- 
     public Balance saveBalance(Balance balance) {
         return balanceRepository.save(balance);
     }
-
+    //---------------------------------------------------------------- 
     public void deleteBalance(Long id) {
         balanceRepository.deleteById(id);
     }
-    
+    //----------------------------------------------------------------     
     public Optional<Balance> getBalanceByUserId(Long userId) {
         return balanceRepository.findByUserId(userId);
     }
-    
+    //----------------------------------------------------------------     
 }

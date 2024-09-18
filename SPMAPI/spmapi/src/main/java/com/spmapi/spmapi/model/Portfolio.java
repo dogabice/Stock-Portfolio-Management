@@ -17,17 +17,18 @@ import java.util.List;
 @Entity
 @Table
 public class Portfolio {
+    //----------------------------------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
+    //----------------------------------------------------------------
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private List<PortfolioStock> portfolioStocks;
-
+    //----------------------------------------------------------------
     // Constructors
     public Portfolio() {
     }
@@ -37,7 +38,7 @@ public class Portfolio {
         this.user = user;
         this.portfolioStocks = portfolioStocks;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -46,7 +47,7 @@ public class Portfolio {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public User getUser() {
         return user;
     }
@@ -54,7 +55,7 @@ public class Portfolio {
     public void setUser(User user) {
         this.user = user;
     }
-
+    //----------------------------------------------------------------
     public List<PortfolioStock> getPortfolioStocks() {
         return portfolioStocks;
     }
@@ -62,5 +63,5 @@ public class Portfolio {
     public void setPortfolioStocks(List<PortfolioStock> portfolioStocks) {
         this.portfolioStocks = portfolioStocks;
     }
-
+    //----------------------------------------------------------------
 }

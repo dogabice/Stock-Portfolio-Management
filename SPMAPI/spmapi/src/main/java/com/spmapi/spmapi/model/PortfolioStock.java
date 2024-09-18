@@ -13,20 +13,21 @@ import lombok.Data;
 @Entity
 @Table
 public class PortfolioStock {
+    //----------------------------------------------------------------    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
-
+    //----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
-
+    //----------------------------------------------------------------
     private int quantity;
-
+    //----------------------------------------------------------------
     // Constructors
     public PortfolioStock() {
     }
@@ -37,7 +38,7 @@ public class PortfolioStock {
         this.stock = stock;
         this.quantity = quantity;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -46,7 +47,7 @@ public class PortfolioStock {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public Portfolio getPortfolio() {
         return portfolio;
     }
@@ -54,7 +55,7 @@ public class PortfolioStock {
     public void setPortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
     }
-
+    //----------------------------------------------------------------
     public Stock getStock() {
         return stock;
     }
@@ -62,7 +63,7 @@ public class PortfolioStock {
     public void setStock(Stock stock) {
         this.stock = stock;
     }
-
+    //----------------------------------------------------------------
     public int getQuantity() {
         return quantity;
     }
@@ -70,4 +71,5 @@ public class PortfolioStock {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+    //----------------------------------------------------------------    
 }

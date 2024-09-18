@@ -17,31 +17,31 @@ import lombok.Data;
 @Entity
 @Table(name = "stock", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Stock {
+    //----------------------------------------------------------------    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
     @Column(name = "name")
     private String name;
-
+    //----------------------------------------------------------------   
     @Column(name = "last_price")
     private BigDecimal lastPrice;
-
+    //----------------------------------------------------------------   
     @Column(name = "buy_price")
     private BigDecimal buyPrice;
-
+    //----------------------------------------------------------------   
     @Column(name = "sell_price")
     private BigDecimal sellPrice;
-
+    //----------------------------------------------------------------   
     @Column(name = "symbol")
     private String symbol;
-
+    //----------------------------------------------------------------   
     @OneToMany(mappedBy = "stock")
     private List<PortfolioStock> portfolioStocks;
-
+    //----------------------------------------------------------------   
     @OneToMany(mappedBy = "stock")
     private List<Transaction> transactions;
-
+    //----------------------------------------------------------------   
     // Constructors
     public Stock() {
     }
@@ -54,10 +54,10 @@ public class Stock {
         this.sellPrice=sellPrice;
         this.symbol=symbol;
     }
-
+    //----------------------------------------------------------------   
     // Getters and Setters
     //-------------------------------------------------
-    //for share's id data
+    //stock id 
     public Long getId() {
         return id;
     }
@@ -65,7 +65,7 @@ public class Stock {
         this.id = id;
     }
     //-------------------------------------------------
-    //for share name data
+    //stock name
     public String getName() {
         return name;
     }
@@ -73,7 +73,7 @@ public class Stock {
         this.name = name;
     }
     //-------------------------------------------------
-    //for last price data
+    //stock's last price 
     public BigDecimal getLastPrice() {
         return lastPrice;
     }
@@ -81,7 +81,7 @@ public class Stock {
         this.lastPrice = last_price;
     }
     //-------------------------------------------------
-    //for buy price data
+    //stock's buy price 
     public BigDecimal getBuyPrice() {
         return buyPrice;
     }
@@ -89,7 +89,7 @@ public class Stock {
         this.buyPrice = buyPrice;
     }
     //-------------------------------------------------
-    //for sell price data
+    //stock's sell price 
     public BigDecimal getSellPrice() {
         return sellPrice;
     }
@@ -97,11 +97,4 @@ public class Stock {
         this.sellPrice = sellPrice;
     }
     //-------------------------------------------------
-    //for sell price data
-    public String getSymbol() {
-        return symbol;
-    }
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
 }

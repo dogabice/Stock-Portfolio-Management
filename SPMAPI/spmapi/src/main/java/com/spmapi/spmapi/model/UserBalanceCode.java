@@ -9,20 +9,21 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class UserBalanceCode {
+    //----------------------------------------------------------------     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //---------------------------------------------------------------- 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
+    //---------------------------------------------------------------- 
     @ManyToOne
     @JoinColumn(name = "balance_code_id")
     private BalanceCode balanceCode;
-
+    //---------------------------------------------------------------- 
     private boolean used;
-
+    //---------------------------------------------------------------- 
     // Constructors
     public UserBalanceCode() {}
 
@@ -32,7 +33,7 @@ public class UserBalanceCode {
         this.balanceCode = balanceCode;
         this.used = used;
     }
-
+    //---------------------------------------------------------------- 
     // Getters and Setters
     public Long getId() {
         return id;
@@ -41,7 +42,7 @@ public class UserBalanceCode {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //---------------------------------------------------------------- 
     public User getUser() {
         return user;
     }
@@ -49,7 +50,7 @@ public class UserBalanceCode {
     public void setUser(User user) {
         this.user = user;
     }
-
+    //---------------------------------------------------------------- 
     public BalanceCode getBalanceCode() {
         return balanceCode;
     }
@@ -57,7 +58,7 @@ public class UserBalanceCode {
     public void setBalanceCode(BalanceCode balanceCode) {
         this.balanceCode = balanceCode;
     }
-
+    //---------------------------------------------------------------- 
     public boolean isUsed() {
         return used;
     }
@@ -65,4 +66,5 @@ public class UserBalanceCode {
     public void setUsed(boolean used) {
         this.used = used;
     }
+    //----------------------------------------------------------------     
 }

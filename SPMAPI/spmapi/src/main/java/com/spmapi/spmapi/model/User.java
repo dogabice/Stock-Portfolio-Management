@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -19,38 +20,34 @@ import lombok.Data;
 @Entity
 @Table(name = "User_of_SPMAPI") 
 public class User {
+    //----------------------------------------------------------------     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String password;
-
+    //---------------------------------------------------------------- 
     private LocalDateTime createdAt;
     private String role; 
     private double balance; 
-
+    //---------------------------------------------------------------- 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Portfolio> portfolios;
-
+    //---------------------------------------------------------------- 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
-
+    //---------------------------------------------------------------- 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Balance> balances;
-
+    //---------------------------------------------------------------- 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserBalanceCode> userBalanceCodes;
-
-
-
-    
-
-     // Parametresiz yapıcı
+    //---------------------------------------------------------------- 
+     // Constructors
      public User() {
     }
 
-    // ID ile yapıcı
     public User(Long id) {
         this.id = id;
     }
@@ -70,9 +67,14 @@ public class User {
         this.balances=balances;
         this.userBalanceCodes=userBalanceCodes;
     }
-
+    //----------------------------------------------------------------  
+    //To fill createdAt value
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+    //---------------------------------------------------------------- 
     // Getters and Setters
-    //-------------------------------------------------------------------
     public Long getId() {
         return id;
     }
@@ -148,7 +150,6 @@ public class User {
     public double getBalance() {
         return balance;
     }
-
     public void setBalance(double balance) {
         this.balance = balance;
     }

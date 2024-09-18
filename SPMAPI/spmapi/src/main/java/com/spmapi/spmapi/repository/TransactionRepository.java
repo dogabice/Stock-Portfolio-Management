@@ -8,12 +8,11 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    // Belirli bir kullanıcıya ait işlemleri listeleme
     List<Transaction> findByUserId(Long userId);
 
-    // Belirli bir portföydeki işlemleri listeleme
     List<Transaction> findByPortfolioId(Long portfolioId);
 
-    // Belirli bir stok ile ilgili işlemleri listeleme
     List<Transaction> findByStockId(Long stockId);
+
+    List<Transaction> findAllByOrderByCreatedAtDesc();
 }

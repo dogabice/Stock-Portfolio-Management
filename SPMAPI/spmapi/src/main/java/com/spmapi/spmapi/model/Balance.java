@@ -15,16 +15,17 @@ import java.math.BigDecimal;
 @Entity
 @Table
 public class Balance {
+    //----------------------------------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
+    //----------------------------------------------------------------
     private BigDecimal balance;
-
+    //----------------------------------------------------------------
     // Constructors
     public Balance() {
     }
@@ -34,7 +35,7 @@ public class Balance {
         this.user = user;
         this.balance = balance;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -43,7 +44,7 @@ public class Balance {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public User getUser() {
         return user;
     }
@@ -51,7 +52,7 @@ public class Balance {
     public void setUser(User user) {
         this.user = user;
     }
-
+    //----------------------------------------------------------------
     public BigDecimal getBalance() {
         return balance;
     }
@@ -59,4 +60,5 @@ public class Balance {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+    //----------------------------------------------------------------    
 }
