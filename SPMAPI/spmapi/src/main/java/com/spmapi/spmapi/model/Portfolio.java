@@ -13,6 +13,9 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data
 @Entity
 @Table
@@ -23,10 +26,12 @@ public class Portfolio {
     private Long id;
     //----------------------------------------------------------------
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
     //----------------------------------------------------------------
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<PortfolioStock> portfolioStocks;
     //----------------------------------------------------------------
     // Constructors

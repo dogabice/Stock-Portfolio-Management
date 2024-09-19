@@ -1,11 +1,10 @@
 package com.spmapi.spmapi.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.spmapi.spmapi.DTOs.CreateUserDTO;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +14,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
 @Entity
@@ -29,15 +30,17 @@ public class User {
     //---------------------------------------------------------------- 
     private LocalDateTime createdAt;
     private String role; 
-    private double balance; 
+    private BigDecimal balance; 
     //---------------------------------------------------------------- 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Portfolio> portfolios;
     //---------------------------------------------------------------- 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
     //---------------------------------------------------------------- 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Balance> balances;
     //---------------------------------------------------------------- 
@@ -53,7 +56,7 @@ public class User {
     }
 
     public User(Long id, String username, String password ,LocalDateTime createdAt,
-     String role, double balance,
+     String role, BigDecimal balance,
      List<Portfolio> portfolios, List<Transaction> transactions, 
      List<Balance> balances, List<UserBalanceCode> userBalanceCodes) {
         this.id = id;
@@ -147,10 +150,10 @@ public class User {
         this.role = role;
     }
     //-------------------------------------------------------------------
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 }

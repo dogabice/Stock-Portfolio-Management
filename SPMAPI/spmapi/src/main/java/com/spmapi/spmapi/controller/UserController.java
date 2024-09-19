@@ -34,6 +34,11 @@ public class UserController {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+    //-------------------------------------------------------------------
+    @DeleteMapping("/{id}")
+       public void deleteOneUser(@PathVariable Long id){
+           userService.deleteUserById(id);
+    }
     //-------------------------------------------------------------------------------------------------------------
     //REGISTER
     @PostMapping("/register")
@@ -59,15 +64,8 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-
-    //-------------------------------------------------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-       public void deleteOneUser(@PathVariable Long id){
-           userService.deleteUserById(id);
-    }
     //-------------------------------------------------------------------------------------------------------------
     //ADMIN TRANSACTIONS
-
     @PostMapping("/admin/create")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
@@ -86,18 +84,5 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    //-------------------------------------------------------------------------
-    @PatchMapping("/{id}/update-balance")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateUserBalance(@PathVariable Long id, @RequestParam double amount) {
-        Optional<User> existingUser = userService.getUserById(id);
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            User updatedUser = userService.updateUserBalance(user, amount);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
     //-------------------------------------------------------------------------
 }

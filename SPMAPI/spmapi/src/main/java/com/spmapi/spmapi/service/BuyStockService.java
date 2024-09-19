@@ -1,16 +1,22 @@
 package com.spmapi.spmapi.service;
 
+//import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.List;
+
 
 import com.spmapi.spmapi.DTOs.BuyStockDTO;
 import com.spmapi.spmapi.model.Portfolio;
+import com.spmapi.spmapi.model.PortfolioStock;
 import com.spmapi.spmapi.model.Stock;
 import com.spmapi.spmapi.model.Transaction;
 import com.spmapi.spmapi.model.User;
+import com.spmapi.spmapi.model.UserBalanceCode;
+import com.spmapi.spmapi.repository.PortfolioStockRepository;
 @Service
 public class BuyStockService {
     //---------------------------------------------------------------- 
@@ -20,13 +26,24 @@ public class BuyStockService {
     //---------------------------------------------------------------- 
     @Autowired
     private PortfolioService portfolioService;
+
+    @Autowired
+    private PortfolioStockRepository portfolioStockRepository;
     //---------------------------------------------------------------- 
     @Autowired
     private StockService stockService;
     //---------------------------------------------------------------- 
     @Autowired
     private TransactionService transactionService;
-    //----------------------------------------------------------------     
+    //---------------------------------------------------------------- 
+    @Autowired
+    private UserBalanceCodeService userBalanceCodeService;
+    //----------------------------------------------------------------    
+    @Autowired
+    private BalanceService balanceService;
+    //----------------------------------------------------------------  
+
+    
     public Transaction BuyStockDTOToTransaction(BuyStockDTO buyStockDTO) {
         Transaction transaction = new Transaction();
         //----------------------------------------------------------------     
@@ -49,6 +66,20 @@ public class BuyStockService {
             BigDecimal commission = totalCost.multiply(commissionRate).divide(BigDecimal.valueOf(100));
             BigDecimal finalCost = totalCost.subtract(commission);
             //---------------------------------------------------------------- 
+            //Check if the user has sufficient funds
+            List<UserBalanceCode> unusedBalanceCodes = userBalanceCodeService.getUnusedBalanceCodesByUserId(buyStockDTO.getUser_id());
+            BigDecimal totalAvailableBalance = unusedBalanceCodes.stream()
+                .map(code -> code.getBalanceCode().getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Log bakiyeleri
+            System.out.println("Total Available Balance: " + totalAvailableBalance);
+            System.out.println("Final Cost: " + finalCost);
+
+            if (totalAvailableBalance.compareTo(finalCost) >= 0) {
+                throw new RuntimeException("Insufficient funds: Transactions cannot be made.");
+            }
+            //---------------------------------------------------------------- 
             //Setting informations    
             transaction.setUser(user);
             transaction.setPortfolio(portfolio);
@@ -58,6 +89,47 @@ public class BuyStockService {
             transaction.setPrice(finalCost); // Toplam maliyeti fiyat olarak ayarla
             transaction.setCommission(commission); // Komisyonu ayarla
             transactionService.saveTransaction(transaction);
+            //----------------------------------------------------------------
+            
+            Optional<PortfolioStock> portfolioStockOptional = portfolio.getPortfolioStocks().stream()
+        .filter(ps -> ps.getStock().equals(stock))
+        .findFirst();
+
+    if (portfolioStockOptional.isPresent()) {
+        // Eğer portföyde hisse zaten varsa, miktarı güncelle
+        PortfolioStock portfolioStock = portfolioStockOptional.get();
+        portfolioStock.setQuantity(portfolioStock.getQuantity() + quantity);
+        portfolioStockRepository.save(portfolioStock);
+    } else {
+        // Yoksa yeni bir PortfolioStock oluştur
+        PortfolioStock newPortfolioStock = new PortfolioStock();
+        newPortfolioStock.setPortfolio(portfolio);
+        newPortfolioStock.setStock(stock);
+        newPortfolioStock.setQuantity(quantity);
+        portfolioStockRepository.save(newPortfolioStock);
+    }
+
+
+
+            //Deduction from user balance and sign the code that been used.
+            BigDecimal remainingAmount = finalCost;
+            for (UserBalanceCode userBalanceCode : unusedBalanceCodes) {
+                BigDecimal codeAmount = userBalanceCode.getBalanceCode().getAmount();
+
+                if (remainingAmount.compareTo(codeAmount) >= 0) {
+                    remainingAmount = remainingAmount.subtract(codeAmount);
+                    userBalanceCodeService.markBalanceCodeAsUsed(userBalanceCode);
+                } else {
+                    // Kullanılan bakiye kodunu güncelle
+                    userBalanceCode.getBalanceCode().setAmount(codeAmount.subtract(remainingAmount));
+                    remainingAmount = BigDecimal.ZERO;
+                    userBalanceCodeService.saveUserBalanceCode(userBalanceCode);
+                    break;
+                }
+            }
+
+            // Bakiyeyi güncelle
+            userBalanceCodeService.deductFromUserBalance(user, finalCost);
             
         } else {
             throw new RuntimeException("User, Portfolio or Stock cannot be found.");

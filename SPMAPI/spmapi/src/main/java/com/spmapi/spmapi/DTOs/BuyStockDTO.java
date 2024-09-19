@@ -13,4 +13,6 @@ public class BuyStockDTO {
     public Long stock_id;
     public Long user_id;
     public int quantity;
+
+    
 }

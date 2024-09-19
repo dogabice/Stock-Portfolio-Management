@@ -1,14 +1,17 @@
 package com.spmapi.spmapi.service;
 
 import com.spmapi.spmapi.model.User;
+import com.spmapi.spmapi.model.UserBalanceCode;
 import com.spmapi.spmapi.DTOs.CreateUserDTO;
 import com.spmapi.spmapi.model.Portfolio;
 import com.spmapi.spmapi.repository.UserRepository;
 import com.spmapi.spmapi.repository.PortfolioRepository;
+import com.spmapi.spmapi.repository.UserBalanceCodeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,9 @@ public class UserService {
     //---------------------------------------------------------------- 
     @Autowired
     private PortfolioRepository portfolioRepository;
+    //-------------------------------------------------------------
+    @Autowired
+    private UserBalanceCodeRepository userBalanceCodeRepository;
     //-------------------------------------------------------------
     public User CreateUserDTOToUser(CreateUserDTO createUserDTO){
         User user = new User();
@@ -54,21 +60,9 @@ public class UserService {
         return userRepository.save(user);
     }
     //---------------------------------------------------------------- 
-    public User updateUserBalance(User user, double amount) {
+    public User updateUserBalance(User user, BigDecimal amount) {
         user.setBalance(amount);
         return userRepository.save(user);
-    }
-    //-------------------------------------------------------------
-    public boolean addBalanceUsingCard(Long userId, String cardCode) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            User existingUser = user.get();
-            double additionalBalance = 100.0;
-            existingUser.setBalance(existingUser.getBalance() + additionalBalance);
-            userRepository.save(existingUser);
-            return true;
-        }
-        return false;
     }
     //-------------------------------------------------------------
     public void createPortfolioForUser(User user) {
@@ -94,4 +88,25 @@ public class UserService {
         return savedUser;
     }
     //-------------------------------------------------------------
+    public BigDecimal calculateTotalBalanceCodesAmount(Long userId) {
+        List<UserBalanceCode> userBalanceCodes = userBalanceCodeRepository.findByUserId(userId);
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (UserBalanceCode userBalanceCode : userBalanceCodes) {
+            totalAmount = totalAmount.add(userBalanceCode.getBalanceCode().getAmount());
+        }
+
+        return totalAmount;
+    }
+    //-------------------------------------------------------------
+    public void updateUserBalanceFromBalanceCodes(Long userId) {
+        BigDecimal totalAmount = calculateTotalBalanceCodesAmount(userId);
+        Optional<User> userOptional = userRepository.findById(userId);
+    
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setBalance(totalAmount); // Kullanıcının bakiyesini güncelle
+            userRepository.save(user);
+        }
+    }
 }

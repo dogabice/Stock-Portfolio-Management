@@ -1,13 +1,9 @@
 package com.spmapi.spmapi.controller;
 
 import com.spmapi.spmapi.DTOs.BalanceCodeDTO;
-import com.spmapi.spmapi.DTOs.BalanceDTO;
-import com.spmapi.spmapi.model.Balance;
 import com.spmapi.spmapi.model.BalanceCode;
-import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.service.BalanceCodeService;
-import com.spmapi.spmapi.service.BalanceService;
-import com.spmapi.spmapi.service.UserService; // UserService'yi ekleyin
+import com.spmapi.spmapi.service.UserBalanceCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +25,15 @@ public class BalanceCodeController {
     private BalanceCodeService balanceCodeService;
     //-------------------------------------------------------------------
     @Autowired
-    private BalanceService balanceService;
-    //-------------------------------------------------------------------
-    @Autowired
-    private UserService userService; // UserService'yi ekleyin
+    private UserBalanceCodeService userBalanceCodeService;
     //-------------------------------------------------------------------
     //MAPPINGS
     @GetMapping
     public ResponseEntity<List<BalanceCodeDTO>> getAllBalanceCodes() {
         List<BalanceCode> balanceCodes = balanceCodeService.getAllBalanceCodes();
         List<BalanceCodeDTO> dtoList = balanceCodes.stream()
-                .map(code -> new BalanceCodeDTO(code.getId(), code.getCode(), code.getAmount()))
+                //.map(code -> new BalanceCodeDTO(code.getId(), code.getCode(), code.getAmount()))
+                .map(code -> new BalanceCodeDTO(code.getCode(), code.getAmount()))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
@@ -61,39 +55,8 @@ public class BalanceCodeController {
         BalanceCode createdBalanceCode = balanceCodeService.saveBalanceCode(balanceCode);
 
         // Return the created BalanceCode
-        return new ResponseEntity<>(new BalanceCodeDTO(createdBalanceCode.getId(), createdBalanceCode.getCode(), createdBalanceCode.getAmount()), HttpStatus.CREATED);
-    }
-    //-------------------------------------------------------------------
-    @PostMapping("/{id}/assign-balance")
-    public ResponseEntity<?> assignBalanceToBalanceCode(@PathVariable Long id, @RequestBody BalanceDTO balanceDTO) {
-        // Validate balanceDTO input
-        if (balanceDTO.getBalance() == null || balanceDTO.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            return new ResponseEntity<>("Balance must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
-        // Check if the BalanceCode exists
-        BalanceCode balanceCode = balanceCodeService.getAllBalanceCodes()
-                .stream()
-                .filter(bc -> bc.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (balanceCode == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Get user by userId
-        Optional<User> userOptional = userService.getUserById(balanceDTO.getUserId());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        // Create and save new Balance
-        User user = userOptional.get();
-        Balance balance = new Balance();
-        balance.setBalance(balanceDTO.getBalance());
-        balance.setUser(user);
-        Balance createdBalance = balanceService.saveBalance(balance);
-        // Return created balance
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BalanceDTO(createdBalance.getId(), createdBalance.getBalance(), createdBalance.getUser().getId()));
+        return new ResponseEntity<>(new BalanceCodeDTO(createdBalanceCode.getCode(), createdBalanceCode.getAmount()), HttpStatus.CREATED);
+        //return new ResponseEntity<>(new BalanceCodeDTO(createdBalanceCode.getId(), createdBalanceCode.getCode(), createdBalanceCode.getAmount()), HttpStatus.CREATED);
     }
     //-------------------------------------------------------------------
     @DeleteMapping("/{id}")
@@ -109,4 +72,16 @@ public class BalanceCodeController {
         return ResponseEntity.noContent().build(); // Return 204 if successful
     }
     //-------------------------------------------------------------------
+    @PostMapping("/assignBalanceCodeToUser/{userId}/balance-code/{balanceCodeId}")
+    public ResponseEntity<String> assignBalanceCodeToUser(
+            @PathVariable Long userId,
+            @PathVariable Long balanceCodeId) {
+        boolean isAssigned = userBalanceCodeService.assignBalanceCodeToUser(userId, balanceCodeId);
+
+        if (isAssigned) {
+            return ResponseEntity.ok("Balance code assigned successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or balance code not found.");
+        }
+    }
 }

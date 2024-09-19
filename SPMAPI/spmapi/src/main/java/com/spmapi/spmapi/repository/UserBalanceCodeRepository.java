@@ -11,4 +11,5 @@ public interface UserBalanceCodeRepository extends JpaRepository<UserBalanceCode
     List<UserBalanceCode> findByUserId(Long userId);
 
     List<UserBalanceCode> findByBalanceCodeId(Long balanceCodeId);
+    List<UserBalanceCode> findByUserIdAndUsedFalse(Long userId);
 }
