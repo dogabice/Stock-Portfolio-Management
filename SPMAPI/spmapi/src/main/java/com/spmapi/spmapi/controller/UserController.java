@@ -4,6 +4,9 @@ import com.spmapi.spmapi.DTOs.CreateUserDTO;
 import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.service.PortfolioService;
 import com.spmapi.spmapi.service.UserService;
+
+import jakarta.resource.spi.AuthenticationMechanism;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/users")
