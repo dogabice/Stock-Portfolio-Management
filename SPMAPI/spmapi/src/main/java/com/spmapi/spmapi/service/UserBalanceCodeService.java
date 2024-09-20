@@ -53,70 +53,63 @@ public class UserBalanceCodeService {
     }
     //---------------------------------------------------------------- 
     public boolean assignBalanceCodeToUser(Long userId, Long balanceCodeId) {
-    Optional<User> userOptional = userRepository.findById(userId);
-    Optional<BalanceCode> balanceCodeOptional = balanceCodeRepository.findById(balanceCodeId);
-
-    if (userOptional.isPresent() && balanceCodeOptional.isPresent()) {
-        User user = userOptional.get();
-        BalanceCode balanceCode = balanceCodeOptional.get();
-
-        BigDecimal currentBalance = user.getBalance();
-
-        BigDecimal balanceCodeAmount = balanceCode.getAmount();
-
-        //Add the BalanceCode's amount to the current balance
-        BigDecimal newBalance = currentBalance.add(balanceCodeAmount);
-
-        user.setBalance(newBalance);
-
-        UserBalanceCode userBalanceCode = new UserBalanceCode();
-        userBalanceCode.setUser(user);
-        userBalanceCode.setBalanceCode(balanceCode);
-        userBalanceCode.setUsed(true);  // marked
-
-        userRepository.save(user);
-        userBalanceCodeRepository.save(userBalanceCode);
-
-        return true;  
-    } else {
-        return false;  
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<BalanceCode> balanceCodeOptional = balanceCodeRepository.findById(balanceCodeId);
+    
+        if (userOptional.isPresent() && balanceCodeOptional.isPresent()) {
+            User user = userOptional.get();
+            BalanceCode balanceCode = balanceCodeOptional.get();
+    
+            BigDecimal currentBalance = user.getBalance(); // Get the current user balance
+            BigDecimal balanceCodeAmount = balanceCode.getAmount(); // Get the balanceCode's amount
+    
+            // Add the BalanceCode's amount to the user's current balance
+            BigDecimal newBalance = currentBalance.add(balanceCodeAmount);
+            user.setBalance(newBalance);
+    
+            // Mark the balance code as used by the user
+            UserBalanceCode userBalanceCode = new UserBalanceCode();
+            userBalanceCode.setUser(user);
+            userBalanceCode.setBalanceCode(balanceCode);
+            userBalanceCode.setUsed(true);  // Mark the code as used
+    
+            // Save updated user balance and user balance code
+            userRepository.save(user);
+            userBalanceCodeRepository.save(userBalanceCode);
+    
+            return true;  
+        } else {
+            return false;  
+        }
     }
-}
+    
     //---------------------------------------------------------------- 
     public void deductFromUserBalance(User user, BigDecimal amount) {
-        // Kullanıcının mevcut bakiyesini al
         Optional<Balance> optionalBalance = balanceRepository.findByUser(user);
         
         BigDecimal currentBalance = optionalBalance
             .map(Balance::getBalance)
             .orElse(BigDecimal.ZERO);
         
-        // Yeni bakiyeyi hesapla
         BigDecimal newBalance = currentBalance.subtract(amount);
         
-        // Bakiyeyi güncelle
         Balance balance = optionalBalance.orElse(new Balance(user, BigDecimal.ZERO));
         balance.setBalance(newBalance);
         balanceRepository.save(balance);
     }
     
     public void addToUserBalance(User user, BigDecimal amount) {
-        // Kullanıcının mevcut bakiyesini al
         Optional<Balance> optionalBalance = balanceRepository.findByUser(user);
         
         BigDecimal currentBalance = optionalBalance
             .map(Balance::getBalance)
             .orElse(BigDecimal.ZERO);
         
-        // Yeni bakiyeyi hesapla
         BigDecimal newBalance = currentBalance.add(amount);
         
-        // Bakiyeyi güncelle
         Balance balance = optionalBalance.orElse(new Balance(user, BigDecimal.ZERO));
         balance.setBalance(newBalance);
         balanceRepository.save(balance);
     }
-    
-    
 }
 

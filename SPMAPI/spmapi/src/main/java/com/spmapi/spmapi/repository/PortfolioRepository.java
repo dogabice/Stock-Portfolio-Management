@@ -2,6 +2,7 @@ package com.spmapi.spmapi.repository;
 
 import com.spmapi.spmapi.model.Portfolio;
 import com.spmapi.spmapi.model.User;
+import com.spmapi.spmapi.model.UserBalanceCode;
 
 import java.util.List;
 
@@ -11,4 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
     List<Portfolio> findByUser(User user);
+
+    List<UserBalanceCode> findByUserId(Long userId);
+
+
 }

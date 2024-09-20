@@ -2,6 +2,7 @@ package com.spmapi.spmapi.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,8 +14,7 @@ import lombok.Data;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Entity
@@ -26,12 +26,12 @@ public class Portfolio {
     private Long id;
     //----------------------------------------------------------------
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
     //----------------------------------------------------------------
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "portfolio", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // @JsonIgnore kaldırılıyor
     private List<PortfolioStock> portfolioStocks;
     //----------------------------------------------------------------
     // Constructors

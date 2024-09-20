@@ -1,5 +1,7 @@
 package com.spmapi.spmapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,10 +21,12 @@ public class UserRole {
     private Long id;
     //---------------------------------------------------------------- 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
     //---------------------------------------------------------------- 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "role_id")
     private Role role;
     //---------------------------------------------------------------- 

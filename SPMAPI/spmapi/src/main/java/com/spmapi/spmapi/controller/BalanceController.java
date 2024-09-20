@@ -26,7 +26,6 @@ public class BalanceController {
     public ResponseEntity<List<BalanceDTO>> getAllBalances() {
         List<Balance> balances = balanceService.getAllBalances();
         List<BalanceDTO> dtoList = balances.stream()
-                //.map(balance -> new BalanceDTO(balance.getId(), balance.getBalance(), balance.getUser().getId()))
                 .map(balance -> new BalanceDTO( balance.getBalance(), balance.getUser().getId()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtoList);
@@ -35,7 +34,6 @@ public class BalanceController {
     @GetMapping("/{id}")
     public ResponseEntity<BalanceDTO> getBalanceById(@PathVariable Long id) {
         Optional<Balance> balance = balanceService.getBalanceById(id);
-        //return balance.map(b -> ResponseEntity.ok(new BalanceDTO(b.getId(), b.getBalance(), b.getUser().getId())))
         return balance.map(b -> ResponseEntity.ok(new BalanceDTO( b.getBalance(), b.getUser().getId())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -5,6 +5,7 @@ import com.spmapi.spmapi.model.PortfolioStock;
 import com.spmapi.spmapi.model.Stock;
 import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.repository.PortfolioRepository;
+import com.spmapi.spmapi.repository.PortfolioStockRepository;
 import com.spmapi.spmapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ public class PortfolioService {
     //----------------------------------------------------------------     
     @Autowired
     private PortfolioRepository portfolioRepository;
-
+    @Autowired
+    private PortfolioStockRepository portfolioStockRepository;
+   //----------------------------------------------------------------
     @Autowired
     private UserRepository userRepository;
     //---------------------------------------------------------------- 
@@ -27,7 +30,15 @@ public class PortfolioService {
     }
     //---------------------------------------------------------------- 
     public Optional<Portfolio> getPortfolioById(Long id) {
-        return portfolioRepository.findById(id);
+        Optional<Portfolio> portfolio = portfolioRepository.findById(id);
+
+        // Eğer portfolyo varsa, ona ait PortfolioStockları alıp sete ekleyelim
+        portfolio.ifPresent(p -> {
+            List<PortfolioStock> stocks = portfolioStockRepository.findByPortfolioId(p.getId());
+            p.setPortfolioStocks(stocks); // Portfolyoya ait tüm stokları ekliyoruz
+        });
+
+        return portfolio;
     }
     //---------------------------------------------------------------- 
     public Portfolio savePortfolio(Portfolio portfolio) {
@@ -46,35 +57,27 @@ public class PortfolioService {
         portfolioRepository.save(portfolio);
     }
     //---------------------------------------------------------------- 
-    //BUY-SELL
     public Portfolio userCreatePortfolio(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User cannot be found."));
 
-        // Yeni bir portföy oluştur
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(user);
         portfolio.setPortfolioStocks(new ArrayList<>());
 
-        // Portföyü kaydet
         return portfolioRepository.save(portfolio);
     }
     public boolean hasSufficientStocks(Portfolio portfolio, Stock stock, int quantity) {
-    // Kullanıcının portföyündeki stokları al
     Optional<PortfolioStock> portfolioStockOptional = portfolio.getPortfolioStocks().stream()
         .filter(ps -> ps.getStock().equals(stock))
         .findFirst();
 
-    // Eğer portföyde istenen stok varsa ve miktar yeterliyse true döner
     if (portfolioStockOptional.isPresent()) {
         PortfolioStock portfolioStock = portfolioStockOptional.get();
         return portfolioStock.getQuantity() >= quantity;
     }
 
-    // Stok bulunamadıysa veya miktar yeterli değilse false döner
     return false;
     }
-
-
     //---------------------------------------------------------------- 
    
 }

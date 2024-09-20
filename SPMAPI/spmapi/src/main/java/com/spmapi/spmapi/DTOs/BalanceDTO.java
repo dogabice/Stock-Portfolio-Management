@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class BalanceDTO {
     private BigDecimal balance;
-    private Long userId; // İlişkili User ID'si
+    private Long userId; 
     //----------------------------------------------------------------
     // Default constructor
     public BalanceDTO() {

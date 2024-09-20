@@ -11,23 +11,24 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Entity
 @Table
 public class Balance {
+    //----------------------------------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //----------------------------------------------------------------
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
-
+    //----------------------------------------------------------------
     private BigDecimal balance;
-
+    //----------------------------------------------------------------
     // Default constructor
     public Balance() {
     }
@@ -37,7 +38,7 @@ public class Balance {
         this.user = user;
         this.balance = balance;
     }
-
+    //----------------------------------------------------------------
     // Getters and Setters
     public Long getId() {
         return id;
@@ -46,7 +47,7 @@ public class Balance {
     public void setId(Long id) {
         this.id = id;
     }
-
+    //----------------------------------------------------------------
     public User getUser() {
         return user;
     }
@@ -54,7 +55,7 @@ public class Balance {
     public void setUser(User user) {
         this.user = user;
     }
-
+    //----------------------------------------------------------------
     public BigDecimal getBalance() {
         return balance;
     }
@@ -62,5 +63,6 @@ public class Balance {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+    //----------------------------------------------------------------    
 }
 

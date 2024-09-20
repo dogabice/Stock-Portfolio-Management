@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
@@ -27,15 +27,17 @@ public class Transaction {
     private Long id;
     //----------------------------------------------------------------  
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
     //----------------------------------------------------------------  
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "stock_id")
     private Stock stock;
     //----------------------------------------------------------------  
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "user_id") // Kullanıcıyı tanımlamak için gerekli
     private User user;
     //----------------------------------------------------------------  

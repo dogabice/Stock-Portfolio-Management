@@ -26,7 +26,6 @@ public class StockController {
     private TransactionService transactionService;
     //-------------------------------------------------------------------
     //STOCK TRANSACTIONS
-
     @PostMapping("/buy")
     public  Transaction buyStock(@RequestBody BuyStockDTO buyStockDTO) {
         Transaction transaction= buyStockService.BuyStockDTOToTransaction(buyStockDTO);
@@ -38,7 +37,6 @@ public class StockController {
         Transaction transaction= sellStockService.SellStockDTOToTransaction(sellStockDTO);
         return transactionService.saveTransaction(transaction);
     }
-
     //-------------------------------------------------------------------
     
    
