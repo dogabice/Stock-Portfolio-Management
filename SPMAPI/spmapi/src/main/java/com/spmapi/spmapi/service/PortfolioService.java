@@ -18,7 +18,7 @@ public class PortfolioService {
     //----------------------------------------------------------------     
     @Autowired
     private PortfolioRepository portfolioRepository;
-
+   //----------------------------------------------------------------
     @Autowired
     private UserRepository userRepository;
     //---------------------------------------------------------------- 
@@ -46,35 +46,27 @@ public class PortfolioService {
         portfolioRepository.save(portfolio);
     }
     //---------------------------------------------------------------- 
-    //BUY-SELL
     public Portfolio userCreatePortfolio(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User cannot be found."));
 
-        // Yeni bir portföy oluştur
         Portfolio portfolio = new Portfolio();
         portfolio.setUser(user);
         portfolio.setPortfolioStocks(new ArrayList<>());
 
-        // Portföyü kaydet
         return portfolioRepository.save(portfolio);
     }
     public boolean hasSufficientStocks(Portfolio portfolio, Stock stock, int quantity) {
-    // Kullanıcının portföyündeki stokları al
     Optional<PortfolioStock> portfolioStockOptional = portfolio.getPortfolioStocks().stream()
         .filter(ps -> ps.getStock().equals(stock))
         .findFirst();
 
-    // Eğer portföyde istenen stok varsa ve miktar yeterliyse true döner
     if (portfolioStockOptional.isPresent()) {
         PortfolioStock portfolioStock = portfolioStockOptional.get();
         return portfolioStock.getQuantity() >= quantity;
     }
 
-    // Stok bulunamadıysa veya miktar yeterli değilse false döner
     return false;
     }
-
-
     //---------------------------------------------------------------- 
    
 }

@@ -23,17 +23,16 @@ public class BalanceCodeController {
     //SERVICES
     @Autowired
     private BalanceCodeService balanceCodeService;
-    //-------------------------------------------------------------------
-    @Autowired
-    private UserBalanceCodeService userBalanceCodeService;
+      //-------------------------------------------------------------------
+      @Autowired
+      private UserBalanceCodeService userBalanceCodeService;  
     //-------------------------------------------------------------------
     //MAPPINGS
     @GetMapping
     public ResponseEntity<List<BalanceCodeDTO>> getAllBalanceCodes() {
         List<BalanceCode> balanceCodes = balanceCodeService.getAllBalanceCodes();
         List<BalanceCodeDTO> dtoList = balanceCodes.stream()
-                //.map(code -> new BalanceCodeDTO(code.getId(), code.getCode(), code.getAmount()))
-                .map(code -> new BalanceCodeDTO(code.getCode(), code.getAmount()))
+                .map(code -> new BalanceCodeDTO( code.getCode(), code.getAmount()))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
@@ -56,32 +55,19 @@ public class BalanceCodeController {
 
         // Return the created BalanceCode
         return new ResponseEntity<>(new BalanceCodeDTO(createdBalanceCode.getCode(), createdBalanceCode.getAmount()), HttpStatus.CREATED);
-        //return new ResponseEntity<>(new BalanceCodeDTO(createdBalanceCode.getId(), createdBalanceCode.getCode(), createdBalanceCode.getAmount()), HttpStatus.CREATED);
     }
     //-------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBalanceCode(@PathVariable Long id) {
-        // Check if the BalanceCode exists
-        Optional<BalanceCode> balanceCodeOptional = balanceCodeService.getBalanceCodeById(id);
-    
-        if (balanceCodeOptional.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Return 404 if not found
-        }
-        // Perform delete operation
-        balanceCodeService.deleteBalanceCode(id);
-        return ResponseEntity.noContent().build(); // Return 204 if successful
-    }
-    //-------------------------------------------------------------------
-    @PostMapping("/assignBalanceCodeToUser/{userId}/balance-code/{balanceCodeId}")
-    public ResponseEntity<String> assignBalanceCodeToUser(
-            @PathVariable Long userId,
-            @PathVariable Long balanceCodeId) {
+    @PostMapping("/{balanceCodeId}/assign-balance/{userId}")
+    public ResponseEntity<?> assignBalanceCodeToUser(@PathVariable Long userId, @PathVariable Long balanceCodeId) {
+        // Assign balance code to user
         boolean isAssigned = userBalanceCodeService.assignBalanceCodeToUser(userId, balanceCodeId);
 
         if (isAssigned) {
-            return ResponseEntity.ok("Balance code assigned successfully.");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Balance code successfully assigned to the user and balance updated.");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or balance code not found.");
+            return new ResponseEntity<>("User or BalanceCode not found.", HttpStatus.BAD_REQUEST);
         }
     }
+
+    //-------------------------------------------------------------------
 }

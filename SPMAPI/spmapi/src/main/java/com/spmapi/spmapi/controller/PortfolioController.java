@@ -17,6 +17,7 @@ public class PortfolioController {
     @Autowired
     private PortfolioService portfolioService;
     //-------------------------------------------------------------------
+    //MAPPINGS
     @GetMapping
     public List<Portfolio> getAllPortfolios() {
         return portfolioService.getAllPortfolios();

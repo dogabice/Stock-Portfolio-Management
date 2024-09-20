@@ -1,13 +1,11 @@
 package com.spmapi.spmapi.service;
 
-//import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.List;
-
 
 import com.spmapi.spmapi.DTOs.BuyStockDTO;
 import com.spmapi.spmapi.model.Portfolio;
@@ -17,6 +15,7 @@ import com.spmapi.spmapi.model.Transaction;
 import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.model.UserBalanceCode;
 import com.spmapi.spmapi.repository.PortfolioStockRepository;
+
 @Service
 public class BuyStockService {
     //---------------------------------------------------------------- 
@@ -38,12 +37,7 @@ public class BuyStockService {
     //---------------------------------------------------------------- 
     @Autowired
     private UserBalanceCodeService userBalanceCodeService;
-    //----------------------------------------------------------------    
-    @Autowired
-    private BalanceService balanceService;
     //----------------------------------------------------------------  
-
-    
     public Transaction BuyStockDTOToTransaction(BuyStockDTO buyStockDTO) {
         Transaction transaction = new Transaction();
         //----------------------------------------------------------------     
@@ -72,7 +66,6 @@ public class BuyStockService {
                 .map(code -> code.getBalanceCode().getAmount())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Log bakiyeleri
             System.out.println("Total Available Balance: " + totalAvailableBalance);
             System.out.println("Final Cost: " + finalCost);
 
@@ -86,30 +79,26 @@ public class BuyStockService {
             transaction.setStock(stock);
             transaction.setQuantity(quantity);
             transaction.setTransactionType(Transaction.TransactionType.BUY);
-            transaction.setPrice(finalCost); // Toplam maliyeti fiyat olarak ayarla
-            transaction.setCommission(commission); // Komisyonu ayarla
+            transaction.setPrice(finalCost); 
+            transaction.setCommission(commission); 
             transactionService.saveTransaction(transaction);
             //----------------------------------------------------------------
             
             Optional<PortfolioStock> portfolioStockOptional = portfolio.getPortfolioStocks().stream()
-        .filter(ps -> ps.getStock().equals(stock))
-        .findFirst();
+            .filter(ps -> ps.getStock().equals(stock))
+            .findFirst();
 
-    if (portfolioStockOptional.isPresent()) {
-        // Eğer portföyde hisse zaten varsa, miktarı güncelle
-        PortfolioStock portfolioStock = portfolioStockOptional.get();
-        portfolioStock.setQuantity(portfolioStock.getQuantity() + quantity);
-        portfolioStockRepository.save(portfolioStock);
-    } else {
-        // Yoksa yeni bir PortfolioStock oluştur
-        PortfolioStock newPortfolioStock = new PortfolioStock();
-        newPortfolioStock.setPortfolio(portfolio);
-        newPortfolioStock.setStock(stock);
-        newPortfolioStock.setQuantity(quantity);
-        portfolioStockRepository.save(newPortfolioStock);
-    }
-
-
+            if (portfolioStockOptional.isPresent()) {
+                PortfolioStock portfolioStock = portfolioStockOptional.get();
+                portfolioStock.setQuantity(portfolioStock.getQuantity() + quantity);
+                portfolioStockRepository.save(portfolioStock);
+            } else {
+                PortfolioStock newPortfolioStock = new PortfolioStock();
+                newPortfolioStock.setPortfolio(portfolio);
+                newPortfolioStock.setStock(stock);
+                newPortfolioStock.setQuantity(quantity);
+                portfolioStockRepository.save(newPortfolioStock);
+            }
 
             //Deduction from user balance and sign the code that been used.
             BigDecimal remainingAmount = finalCost;
@@ -120,15 +109,12 @@ public class BuyStockService {
                     remainingAmount = remainingAmount.subtract(codeAmount);
                     userBalanceCodeService.markBalanceCodeAsUsed(userBalanceCode);
                 } else {
-                    // Kullanılan bakiye kodunu güncelle
                     userBalanceCode.getBalanceCode().setAmount(codeAmount.subtract(remainingAmount));
                     remainingAmount = BigDecimal.ZERO;
                     userBalanceCodeService.saveUserBalanceCode(userBalanceCode);
                     break;
                 }
             }
-
-            // Bakiyeyi güncelle
             userBalanceCodeService.deductFromUserBalance(user, finalCost);
             
         } else {

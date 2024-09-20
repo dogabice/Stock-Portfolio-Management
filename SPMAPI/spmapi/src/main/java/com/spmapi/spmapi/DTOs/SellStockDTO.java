@@ -13,6 +13,5 @@ public class SellStockDTO {
     public Long portfolio_id;
     public Long stock_id;
     public Long user_id;
-
     public int quantity;
 }

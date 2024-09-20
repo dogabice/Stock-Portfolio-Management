@@ -18,11 +18,11 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
     //-------------------------------------------------------------------
+    //MAPPINGS
     @GetMapping
     public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
-    
     //-------------------------------------------------------------------
     @PutMapping("/update-commission")
     @PreAuthorize("hasRole('ADMIN')")
@@ -30,7 +30,6 @@ public class TransactionController {
         if (newRate.compareTo(BigDecimal.ZERO) <= 0) {
             return ResponseEntity.badRequest().body("Commission rate must be larger than zero.");
         }
-
         transactionService.setCommissionRate(newRate);
         return ResponseEntity.ok("Commission rate successfully updated: " + newRate + "%");
     }

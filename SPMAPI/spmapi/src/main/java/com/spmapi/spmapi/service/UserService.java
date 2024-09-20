@@ -105,7 +105,7 @@ public class UserService {
     
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setBalance(totalAmount); // Kullanıcının bakiyesini güncelle
+            user.setBalance(totalAmount); 
             userRepository.save(user);
         }
     }
