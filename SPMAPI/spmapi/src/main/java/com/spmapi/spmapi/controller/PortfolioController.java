@@ -2,6 +2,7 @@ package com.spmapi.spmapi.controller;
 
 import com.spmapi.spmapi.model.Portfolio;
 import com.spmapi.spmapi.service.PortfolioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,10 @@ public class PortfolioController {
     @GetMapping("/{id}")
     public ResponseEntity<Portfolio> getPortfolioById(@PathVariable Long id) {
         Optional<Portfolio> portfolio = portfolioService.getPortfolioById(id);
-        return portfolio.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return portfolio.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+
     //-------------------------------------------------------------------
     @PostMapping("/create")
     public ResponseEntity<Portfolio> createPortfolio(@RequestParam Long userId) {

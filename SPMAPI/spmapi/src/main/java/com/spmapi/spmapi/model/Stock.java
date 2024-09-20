@@ -3,6 +3,9 @@ package com.spmapi.spmapi.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,9 +40,11 @@ public class Stock {
     private String symbol;
     //----------------------------------------------------------------   
     @OneToMany(mappedBy = "stock")
+    @JsonIgnore
     private List<PortfolioStock> portfolioStocks;
     //----------------------------------------------------------------   
-    @OneToMany(mappedBy = "stock")
+    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Transaction> transactions;
     //----------------------------------------------------------------   
     // Constructors

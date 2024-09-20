@@ -1,5 +1,7 @@
 package com.spmapi.spmapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,10 +17,12 @@ public class UserBalanceCode {
     private Long id;
     //---------------------------------------------------------------- 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
     //---------------------------------------------------------------- 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "balance_code_id")
     private BalanceCode balanceCode;
     //---------------------------------------------------------------- 

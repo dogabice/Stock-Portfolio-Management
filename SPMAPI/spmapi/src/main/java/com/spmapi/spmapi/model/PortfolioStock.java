@@ -1,6 +1,6 @@
 package com.spmapi.spmapi.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,13 +21,13 @@ public class PortfolioStock {
     private Long id;
     //----------------------------------------------------------------
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore // Bu alan, sonsuz döngü oluşmaması için bırakılabilir
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
     //----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "stock_id")
-    private Stock stock;
+    private Stock stock; // @JsonIgnore burada kaldırılmalı
     //----------------------------------------------------------------
     private int quantity;
     //----------------------------------------------------------------

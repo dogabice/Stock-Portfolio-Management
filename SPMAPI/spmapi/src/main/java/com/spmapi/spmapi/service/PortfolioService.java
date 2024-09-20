@@ -5,6 +5,7 @@ import com.spmapi.spmapi.model.PortfolioStock;
 import com.spmapi.spmapi.model.Stock;
 import com.spmapi.spmapi.model.User;
 import com.spmapi.spmapi.repository.PortfolioRepository;
+import com.spmapi.spmapi.repository.PortfolioStockRepository;
 import com.spmapi.spmapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class PortfolioService {
     //----------------------------------------------------------------     
     @Autowired
     private PortfolioRepository portfolioRepository;
+    @Autowired
+    private PortfolioStockRepository portfolioStockRepository;
    //----------------------------------------------------------------
     @Autowired
     private UserRepository userRepository;
@@ -27,7 +30,15 @@ public class PortfolioService {
     }
     //---------------------------------------------------------------- 
     public Optional<Portfolio> getPortfolioById(Long id) {
-        return portfolioRepository.findById(id);
+        Optional<Portfolio> portfolio = portfolioRepository.findById(id);
+
+        // Eğer portfolyo varsa, ona ait PortfolioStockları alıp sete ekleyelim
+        portfolio.ifPresent(p -> {
+            List<PortfolioStock> stocks = portfolioStockRepository.findByPortfolioId(p.getId());
+            p.setPortfolioStocks(stocks); // Portfolyoya ait tüm stokları ekliyoruz
+        });
+
+        return portfolio;
     }
     //---------------------------------------------------------------- 
     public Portfolio savePortfolio(Portfolio portfolio) {

@@ -16,64 +16,64 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
 @Entity
-@Table(name = "User_of_SPMAPI") 
+@Table(name = "User_of_SPMAPI")
 public class User {
-    //----------------------------------------------------------------     
+    //---------------------------------------------------------------- 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //----------------------------------------------------------------     
     private String username;
     private String password;
-    //---------------------------------------------------------------- 
+    //----------------------------------------------------------------     
     private LocalDateTime createdAt;
     private String role; 
-     @Column(nullable = false)
+    //----------------------------------------------------------------    
+    @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
-    //---------------------------------------------------------------- 
+    //----------------------------------------------------------------     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JsonIgnore // Portfolios referansını yok say
     private List<Portfolio> portfolios;
-    //---------------------------------------------------------------- 
-    @JsonManagedReference
+    //----------------------------------------------------------------  
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
-    //---------------------------------------------------------------- 
-    @JsonManagedReference
+    //----------------------------------------------------------------     
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Balance> balances;
-    //---------------------------------------------------------------- 
+    //----------------------------------------------------------------     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore // UserBalanceCode referansını yok say
     private List<UserBalanceCode> userBalanceCodes;
     //---------------------------------------------------------------- 
-     // Constructors
-     public User() {
-    }
+    // Constructors, Getters ve Setters
+    public User() {}
 
     public User(Long id) {
         this.id = id;
     }
 
-    public User(Long id, String username, String password ,LocalDateTime createdAt,
-     String role, BigDecimal balance,
-     List<Portfolio> portfolios, List<Transaction> transactions, 
-     List<Balance> balances, List<UserBalanceCode> userBalanceCodes) {
+    public User(Long id, String username, String password, LocalDateTime createdAt,
+                String role, BigDecimal balance,
+                List<Portfolio> portfolios, List<Transaction> transactions, 
+                List<Balance> balances, List<UserBalanceCode> userBalanceCodes) {
         this.id = id;
         this.username = username;
-        this.password=password;
-        this.createdAt=createdAt;
+        this.password = password;
+        this.createdAt = createdAt;
         this.role = role;
         this.balance = balance;
         this.portfolios = portfolios;
-        this.transactions=transactions;
-        this.balances=balances;
-        this.userBalanceCodes=userBalanceCodes;
+        this.transactions = transactions;
+        this.balances = balances;
+        this.userBalanceCodes = userBalanceCodes;
     }
-    //----------------------------------------------------------------  
-    //To fill createdAt value
+    //---------------------------------------------------------------- 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -158,4 +158,5 @@ public class User {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+    
 }

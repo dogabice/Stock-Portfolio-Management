@@ -11,7 +11,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Entity
@@ -23,8 +23,8 @@ public class Balance {
     private Long id;
     //----------------------------------------------------------------
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
     //----------------------------------------------------------------
     private BigDecimal balance;
